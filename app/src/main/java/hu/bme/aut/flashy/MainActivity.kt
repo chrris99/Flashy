@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.room.Room
@@ -11,6 +12,7 @@ import hu.bme.aut.flashy.adapter.FlashcardCollectionAdapter
 import hu.bme.aut.flashy.data.FlashcardCollection
 import hu.bme.aut.flashy.data.FlashcardCollectionDatabase
 import hu.bme.aut.flashy.fragments.NewFlashcardCollectionDialogFragment
+import hu.bme.aut.flashy.helper.SwipeToDeleteCallback
 import kotlin.concurrent.thread
 
 class MainActivity : AppCompatActivity(), FlashcardCollectionAdapter.FlashcardCollectionClickListener,
@@ -43,6 +45,15 @@ class MainActivity : AppCompatActivity(), FlashcardCollectionAdapter.FlashcardCo
         loadItemsInBackground()
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapter
+
+        val swipeHandler = object : SwipeToDeleteCallback(this) {
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val adapter = recyclerView.adapter as FlashcardCollectionAdapter
+                adapter.removeItem(viewHolder.adapterPosition)
+            }
+        }
+        val itemTouchHelper = ItemTouchHelper(swipeHandler)
+        itemTouchHelper.attachToRecyclerView(recyclerView)
     }
 
     private fun loadItemsInBackground() {

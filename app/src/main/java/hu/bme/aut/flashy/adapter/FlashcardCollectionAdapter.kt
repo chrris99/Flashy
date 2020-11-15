@@ -12,7 +12,7 @@ import hu.bme.aut.flashy.data.FlashcardCollection
 class FlashcardCollectionAdapter(private val listener: FlashcardCollectionClickListener) :
     RecyclerView.Adapter<FlashcardCollectionAdapter.FlashcardCollectionHolder>() {
 
-    private val items = mutableListOf<FlashcardCollection>()
+    private val flashcardCollections = mutableListOf<FlashcardCollection>()
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FlashcardCollectionHolder {
         val itemView: View = LayoutInflater
             .from(parent.context)
@@ -21,26 +21,33 @@ class FlashcardCollectionAdapter(private val listener: FlashcardCollectionClickL
     }
 
     override fun onBindViewHolder(holder: FlashcardCollectionHolder, position: Int) {
-        val item = items[position]
-        holder.nameTextView.text = item.name
-        holder.descriptionTextView.text = item.description
+        val flashcardCollection = flashcardCollections[position]
+        holder.nameTextView.text = flashcardCollection.name
+        holder.descriptionTextView.text = flashcardCollection.description
 
-        holder.item = item
+        holder.flashcardCollection = flashcardCollection
     }
 
     override fun getItemCount(): Int {
-        return items.size
+        return flashcardCollections.size
     }
 
     fun addItem(item: FlashcardCollection) {
-        items.add(item)
-        notifyItemInserted(items.size - 1)
+        flashcardCollections.add(item)
+        notifyItemInserted(flashcardCollections.size - 1)
     }
 
     fun update(shoppingItems: List<FlashcardCollection>) {
-        items.clear()
-        items.addAll(shoppingItems)
+        flashcardCollections.clear()
+        flashcardCollections.addAll(shoppingItems)
         notifyDataSetChanged()
+    }
+
+    fun removeItem(position: Int) {
+        val flashcardCollection = flashcardCollections[position]
+        flashcardCollections.removeAt(position);
+        notifyItemRemoved(position);
+        listener.onFlashcardCollectionRemoved(flashcardCollection)
     }
 
     interface FlashcardCollectionClickListener {
@@ -52,6 +59,6 @@ class FlashcardCollectionAdapter(private val listener: FlashcardCollectionClickL
         val nameTextView: TextView = itemView.findViewById(R.id.FlashcardCollectionName)
         val descriptionTextView: TextView = itemView.findViewById(R.id.FlashcardCollectionDescription)
 
-        var item: FlashcardCollection? = null
+        var flashcardCollection: FlashcardCollection? = null
     }
 }

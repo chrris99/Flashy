@@ -36,7 +36,7 @@
                     android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/FlashcardCollectionName"
+                        android:id="@+id/CollectionName"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="History"
@@ -44,7 +44,7 @@
                         android:textColor="#ffffff" />
 
                     <TextView
-                        android:id="@+id/FlashcardCollectionDescription"
+                        android:id="@+id/CollectionDescription"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="30 Cards"

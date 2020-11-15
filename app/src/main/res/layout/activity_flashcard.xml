@@ -20,10 +20,10 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <include layout="@layout/content_main" />
+    <include layout="@layout/content_flashcard" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/addCollectionFab"
+        android:id="@+id/addFlashcardFab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
@@ -31,6 +31,3 @@
         android:src="@drawable/add" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
-
-

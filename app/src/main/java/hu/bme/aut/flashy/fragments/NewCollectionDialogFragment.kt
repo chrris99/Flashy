@@ -5,7 +5,9 @@ import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.ArrayAdapter
 import android.widget.EditText
+import android.widget.Spinner
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import hu.bme.aut.flashy.R
@@ -43,12 +45,19 @@ class NewCollectionDialogFragment : DialogFragment() {
 
     private fun isValid() = nameEditText.text.isNotEmpty()
 
-    private fun getCollection() =
-        Collection(
+    private fun getCollection(): Collection{
+        val background = (1..4).shuffled().first()
+
+        return Collection(
             id = null,
             name = nameEditText.text.toString(),
-            description = descriptionEditText.text.toString()
+            description = descriptionEditText.text.toString(),
+            color = Collection.CollectionColor.getByOrdinal(background)
+                ?: Collection.CollectionColor.YELLOW
         )
+    }
+
+
 
     private fun getContentView(): View {
         val contentView = LayoutInflater.from(context).inflate(R.layout.dialog_new_collection, null)

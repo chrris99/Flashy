@@ -7,28 +7,40 @@
     tools:context=".MainActivity">
 
     <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/Theme.ShoppingList.AppBarOverlay">
+        android:layout_height="wrap_content">
 
         <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
+            android:id="@+id/ActionBar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
-            app:popupTheme="@style/Theme.ShoppingList.PopupOverlay" />
+            app:menu="@menu/top_menu"
+            app:title="Collections"
+            app:titleTextColor="@color/colorWhite" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <include layout="@layout/content_main" />
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/CollectionRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_anchor="@+id/CollectionRecyclerView"
+        app:layout_anchorGravity="center"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        tools:listitem="@layout/collection_item" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/addCollectionFab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
-        android:src="@drawable/add" />
+        android:src="@drawable/ic_add"
+        app:backgroundTint="@color/colorAccent"
+        android:layout_gravity="bottom|end"
+        app:maxImageSize="30dp"
+        app:tint="@color/colorBlack" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

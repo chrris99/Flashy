@@ -7,6 +7,9 @@ interface CollectionDao {
     @Query("SELECT * FROM collection")
     fun getAll(): List<Collection>
 
+    @Query("SELECT * FROM collection WHERE id = :id")
+    fun getWithId(id: Long): Collection
+
     @Insert
     fun insert(collections: Collection): Long
 
@@ -15,4 +18,7 @@ interface CollectionDao {
 
     @Delete
     fun deleteItem(collection: Collection)
+
+    @Query("DELETE FROM collection")
+    fun nukeTable()
 }

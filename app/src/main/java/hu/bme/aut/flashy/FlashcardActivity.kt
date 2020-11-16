@@ -3,7 +3,10 @@ package hu.bme.aut.flashy
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -15,7 +18,6 @@ import hu.bme.aut.flashy.data.flashcard.Flashcard
 import hu.bme.aut.flashy.data.flashcard.FlashcardDatabase
 import hu.bme.aut.flashy.fragments.NewCollectionDialogFragment
 import hu.bme.aut.flashy.fragments.NewFlashcardDialogFragment
-import hu.bme.aut.flashy.helper.SwipeToDeleteCallback
 import kotlin.concurrent.thread
 
 class FlashcardActivity : AppCompatActivity(), FlashcardAdapter.FlashcardClickListener,
@@ -26,10 +28,12 @@ class FlashcardActivity : AppCompatActivity(), FlashcardAdapter.FlashcardClickLi
     private lateinit var database: FlashcardDatabase
 
     private var collectionId: Long = 0
+    private var collectionName: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_flashcard)
+        setSupportActionBar(findViewById(R.id.FlashcardActionBar))
 
         findViewById<View>(R.id.addFlashcardFab).setOnClickListener{
             NewFlashcardDialogFragment().show(
@@ -39,12 +43,15 @@ class FlashcardActivity : AppCompatActivity(), FlashcardAdapter.FlashcardClickLi
         }
 
         collectionId = intent.getLongExtra("collectionId", 0)
+        collectionName = intent.getStringExtra("collectionName").toString()
 
         database = Room.databaseBuilder(
             applicationContext,
             FlashcardDatabase::class.java,
             "flashcard-list"
         ).build()
+
+        this.supportActionBar?.title = collectionName
 
         initRecyclerView()
     }
@@ -55,15 +62,6 @@ class FlashcardActivity : AppCompatActivity(), FlashcardAdapter.FlashcardClickLi
         loadItemsInBackground()
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapter
-
-        val swipeHandler = object : SwipeToDeleteCallback(this) {
-            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                val adapter = recyclerView.adapter as FlashcardAdapter
-                adapter.removeFlashcard(viewHolder.adapterPosition)
-            }
-        }
-        val itemTouchHelper = ItemTouchHelper(swipeHandler)
-        itemTouchHelper.attachToRecyclerView(recyclerView)
     }
 
     private fun loadItemsInBackground() {
@@ -91,7 +89,6 @@ class FlashcardActivity : AppCompatActivity(), FlashcardAdapter.FlashcardClickLi
             newFlashcard = newFlashcard.copy(
                 id = newId
             )
-            Log.d("MainActivity", "${newFlashcard.id}, ${newFlashcard.collectionId}, ${newFlashcard.term}, ${newFlashcard.definition}")
             runOnUiThread {
                 adapter.addFlashcard(newFlashcard)
             }
@@ -104,4 +101,28 @@ class FlashcardActivity : AppCompatActivity(), FlashcardAdapter.FlashcardClickLi
             Log.d("MainActivity", "Flashcard was removed succesfully")
         }
     }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        menuInflater.inflate(R.menu.top_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        return when (item.itemId) {
+            R.id.menuSettings -> {
+                Toast.makeText(this, "Settings selected", Toast.LENGTH_SHORT).show()
+                true
+            }
+            R.id.menuMore -> {
+                Toast.makeText(this, "More selected", Toast.LENGTH_SHORT).show()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
 }

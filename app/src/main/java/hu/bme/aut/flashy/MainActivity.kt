@@ -3,8 +3,10 @@ package hu.bme.aut.flashy
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
-import androidx.recyclerview.widget.ItemTouchHelper
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.room.Room
@@ -12,7 +14,6 @@ import hu.bme.aut.flashy.adapter.CollectionAdapter
 import hu.bme.aut.flashy.data.collection.Collection
 import hu.bme.aut.flashy.data.collection.CollectionDatabase
 import hu.bme.aut.flashy.fragments.NewCollectionDialogFragment
-import hu.bme.aut.flashy.helper.SwipeToDeleteCallback
 import kotlin.concurrent.thread
 
 class MainActivity : AppCompatActivity(), CollectionAdapter.CollectionClickListener,
@@ -25,17 +26,23 @@ class MainActivity : AppCompatActivity(), CollectionAdapter.CollectionClickListe
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        setSupportActionBar(findViewById(R.id.ActionBar))
+
         findViewById<View>(R.id.addCollectionFab).setOnClickListener{
             NewCollectionDialogFragment().show(
                 supportFragmentManager,
                 NewCollectionDialogFragment.TAG
             )
         }
+
         database = Room.databaseBuilder(
             applicationContext,
             CollectionDatabase::class.java,
             "collection-list"
-        ).build()
+        )
+            .fallbackToDestructiveMigration()
+            .build()
+
         initRecyclerView()
     }
 
@@ -45,15 +52,6 @@ class MainActivity : AppCompatActivity(), CollectionAdapter.CollectionClickListe
         loadItemsInBackground()
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapter
-
-        val swipeHandler = object : SwipeToDeleteCallback(this) {
-            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                val adapter = recyclerView.adapter as CollectionAdapter
-                adapter.removeCollection(viewHolder.adapterPosition)
-            }
-        }
-        val itemTouchHelper = ItemTouchHelper(swipeHandler)
-        itemTouchHelper.attachToRecyclerView(recyclerView)
     }
 
     private fun loadItemsInBackground() {
@@ -88,6 +86,29 @@ class MainActivity : AppCompatActivity(), CollectionAdapter.CollectionClickListe
         thread {
             database.collectionDao().deleteItem(collection)
             Log.d("MainActivity", "Collection was removed succesfully")
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        menuInflater.inflate(R.menu.top_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        return when (item.itemId) {
+            R.id.menuSettings -> {
+                Toast.makeText(this, "Settings selected", Toast.LENGTH_SHORT).show()
+                true
+            }
+            R.id.menuMore -> {
+                Toast.makeText(this, "More selected", Toast.LENGTH_SHORT).show()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
         }
     }
 

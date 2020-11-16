@@ -19,10 +19,11 @@
     <string name="term">Term</string>
     <string name="definition">Definition</string>
 
-    <string-array name="category_items">
-        <item>Food</item>
-        <item>Electronic</item>
-        <item>Book</item>
+    <string-array name="collection_colors">
+        <item>Yellow</item>
+        <item>Blue</item>
+        <item>Purple</item>
+        <item>Green</item>
     </string-array>
 
 </resources>

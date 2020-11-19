@@ -13,11 +13,13 @@ import androidx.room.Room
 import hu.bme.aut.flashy.adapter.CollectionAdapter
 import hu.bme.aut.flashy.data.collection.Collection
 import hu.bme.aut.flashy.data.collection.CollectionDatabase
+import hu.bme.aut.flashy.fragments.EditCollectionDialogFragment
 import hu.bme.aut.flashy.fragments.NewCollectionDialogFragment
 import kotlin.concurrent.thread
 
 class MainActivity : AppCompatActivity(), CollectionAdapter.CollectionClickListener,
-    NewCollectionDialogFragment.NewCollectionDialogListener {
+    NewCollectionDialogFragment.NewCollectionDialogListener,
+    EditCollectionDialogFragment.EditCollectionDialogListener {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: CollectionAdapter
@@ -63,10 +65,11 @@ class MainActivity : AppCompatActivity(), CollectionAdapter.CollectionClickListe
         }
     }
 
-    override fun onCollectionChanged(collection: Collection) {
+    override fun onCollectionChanged(changedCollection: Collection) {
         thread {
-            database.collectionDao().update(collection)
+            database.collectionDao().update(changedCollection)
             Log.d("MainActivity", "Collection update was successful")
+            loadItemsInBackground()
         }
     }
 
@@ -90,15 +93,11 @@ class MainActivity : AppCompatActivity(), CollectionAdapter.CollectionClickListe
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.top_menu, menu)
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         return when (item.itemId) {
             R.id.menuSettings -> {
                 Toast.makeText(this, "Settings selected", Toast.LENGTH_SHORT).show()

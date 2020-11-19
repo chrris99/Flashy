@@ -18,6 +18,7 @@
     <string name="new_flashcard">New flashcard</string>
     <string name="term">Term</string>
     <string name="definition">Definition</string>
+    <string name="edit_collection">Edit collection</string>
 
     <string-array name="collection_colors">
         <item>Yellow</item>

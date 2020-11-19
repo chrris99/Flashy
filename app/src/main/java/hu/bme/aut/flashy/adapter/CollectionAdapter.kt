@@ -1,6 +1,8 @@
 package hu.bme.aut.flashy.adapter
 
+import android.app.ActivityOptions
 import android.content.Intent
+import android.content.res.Resources
 import android.util.Log
 import android.view.*
 import android.view.View.OnLongClickListener
@@ -14,6 +16,8 @@ import hu.bme.aut.flashy.FlashcardActivity
 import hu.bme.aut.flashy.MainActivity
 import hu.bme.aut.flashy.R
 import hu.bme.aut.flashy.data.collection.Collection
+import hu.bme.aut.flashy.fragments.EditCollectionDialogFragment
+import hu.bme.aut.flashy.fragments.NewCollectionDialogFragment
 
 
 class CollectionAdapter(private val listener: MainActivity) :
@@ -51,7 +55,15 @@ class CollectionAdapter(private val listener: MainActivity) :
                 return when (item.itemId) {
                     R.id.ContextMenuEdit -> {
                         Toast.makeText(listener, "Edit selected", Toast.LENGTH_SHORT).show()
-                        mode.finish() // Action picked, so close the CAB
+                        val editCollectionDialogFragment = EditCollectionDialogFragment()
+                        editCollectionDialogFragment.setCollection(holder.collection)
+
+                        editCollectionDialogFragment.show(
+                            listener.supportFragmentManager,
+                            NewCollectionDialogFragment.TAG
+                        )
+                        holder.itemView.isSelected = false
+                        mode.finish()
                         true
                     }
                     R.id.ContextMenuDelete -> {
@@ -65,6 +77,7 @@ class CollectionAdapter(private val listener: MainActivity) :
 
             // Called when the user exits the action mode
             override fun onDestroyActionMode(mode: ActionMode) {
+                holder.itemView.isSelected = false
                 actionMode = null
             }
         }
@@ -116,12 +129,12 @@ class CollectionAdapter(private val listener: MainActivity) :
         val collection = collections[position]
         collections.removeAt(position);
         notifyItemRemoved(position);
-        Toast.makeText(listener.applicationContext,"${collection.name.toString()} collection has been removed",Toast.LENGTH_SHORT).show()
+        Toast.makeText(listener.applicationContext,"Collection has been removed",Toast.LENGTH_SHORT).show()
         listener.onCollectionRemoved(collection)
     }
 
     interface CollectionClickListener {
-        fun onCollectionChanged(collection: Collection)
+        //fun onCollectionChanged(collection: Collection)
         fun onCollectionRemoved(collection: Collection)
     }
 

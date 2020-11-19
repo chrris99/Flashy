@@ -6,15 +6,23 @@
 
     <color name="colorItem1Start">#FEBD1B</color>
     <color name="colorItem1End">#E4A401</color>
+    <color name="colorItem1StartSelected">#90FEBD1B</color>
+    <color name="colorItem1EndSelected">#90E4A401</color>
 
     <color name="colorItem2Start">#4D79FF</color>
     <color name="colorItem2End">#0039E6</color>
+    <color name="colorItem2StartSelected">#904D79FF</color>
+    <color name="colorItem2EndSelected">#900039E6</color>
 
     <color name="colorItem3Start">#993399</color>
     <color name="colorItem3End">#602060</color>
+    <color name="colorItem3StartSelected">#90993399</color>
+    <color name="colorItem3EndSelected">#90602060</color>
 
     <color name="colorItem4Start">#00B33C</color>
     <color name="colorItem4End">#006622</color>
+    <color name="colorItem4StartSelected">#9000B33C</color>
+    <color name="colorItem4EndSelected">#90006622</color>
 
     <color name="colorEndBackground">#50FFFFFF</color>
     <color name="colorLightText">#ECECEC</color>

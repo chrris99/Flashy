@@ -64,7 +64,7 @@
                         android:layout_alignParentRight="true"
                         android:layout_width="80dp"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/book"
+                        android:src="@drawable/custom_collection_icon"
                         android:layout_alignParentEnd="true" />
 
                 </RelativeLayout>

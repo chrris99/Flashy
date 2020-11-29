@@ -6,35 +6,43 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.EditText
+import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import hu.bme.aut.flashy.R
 import hu.bme.aut.flashy.data.flashcard.Flashcard
 
-class NewFlashcardDialogFragment : DialogFragment() {
+class EditFlashcardDialogFragment : DialogFragment() {
 
     private lateinit var termEditText: EditText
     private lateinit var definitionEditText: EditText
 
-    interface NewFlashcardDialogListener {
-        fun onFlashcardCreated(newFlashcard: Flashcard)
+    interface EditFlashcardDialogListener {
+        fun onFlashcardChanged(changedFlashcard : Flashcard)
     }
 
-    private lateinit var listener: NewFlashcardDialogListener
+    private lateinit var listener: EditFlashcardDialogListener
+    private lateinit var flashcard: Flashcard
+
+    fun setFlashcard(flashcard: Flashcard?) {
+        if (flashcard != null) {
+            this.flashcard = flashcard
+        }
+    }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        listener = context as? NewFlashcardDialogListener
-            ?: throw RuntimeException("Activity must implement the NewFlashcardDialogListener interface!")
+        listener = context as? EditFlashcardDialogListener
+            ?: throw RuntimeException("Activity must implement the EditFlashcardDialogListener interface!")
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return AlertDialog.Builder(requireContext())
-            .setTitle(R.string.new_flashcard)
+            .setTitle(R.string.edit_collection)
             .setView(getContentView())
             .setPositiveButton(R.string.ok) { dialogInterface, i ->
                 if (isValid()) {
-                    listener.onFlashcardCreated(getFlashcard())
+                    listener.onFlashcardChanged(getFlashcard())
                 }
             }
             .setNegativeButton(R.string.cancel, null)
@@ -45,11 +53,11 @@ class NewFlashcardDialogFragment : DialogFragment() {
 
     private fun getFlashcard() =
         Flashcard(
-            id = null,
+            id = flashcard.id,
             term = termEditText.text.toString(),
             definition = definitionEditText.text.toString(),
-            learned = false,
-            collectionId = 4
+            learned = flashcard.learned,
+            collectionId = flashcard.collectionId
         )
 
     private fun getContentView(): View {
@@ -57,10 +65,13 @@ class NewFlashcardDialogFragment : DialogFragment() {
         termEditText = contentView.findViewById(R.id.FlashcardTermEditText)
         definitionEditText = contentView.findViewById(R.id.FlashcardDefinitionEditText)
 
+        termEditText.setText(flashcard.term, TextView.BufferType.EDITABLE)
+        definitionEditText.setText(flashcard.definition, TextView.BufferType.EDITABLE)
+
         return contentView
     }
 
     companion object {
-        const val TAG = "NewFlashcardDialogFragment"
+        const val TAG = "EditFlashcardDialogFragment"
     }
 }

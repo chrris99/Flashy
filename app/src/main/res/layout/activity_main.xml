@@ -34,15 +34,15 @@
         android:clipToPadding="false"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/addCollectionFab"
+        android:id="@+id/addFlashcardFab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/fab_margin"
         android:src="@drawable/ic_add"
-        app:backgroundTint="@color/colorAccent"
+        app:backgroundTint="@color/colorPrimary"
         android:layout_gravity="bottom|end"
         app:maxImageSize="30dp"
-        app:tint="@color/colorBlack" />
+        app:tint="@color/colorWhite" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

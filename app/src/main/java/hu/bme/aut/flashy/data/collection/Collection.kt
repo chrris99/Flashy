@@ -10,6 +10,8 @@ data class Collection(
     @ColumnInfo(name = "id") @PrimaryKey(autoGenerate = true) val id: Long?,
     @ColumnInfo(name = "name") val name: String,
     @ColumnInfo(name = "description") val description: String,
+    @ColumnInfo(name = "flashcardcount") val flashcardCount: Int,
+    @ColumnInfo(name = "learnedflashcardcount") val learnedFlashcardCount: Int,
     @ColumnInfo(name = "color") val color: CollectionColor
 ) {
     enum class CollectionColor {

@@ -19,6 +19,8 @@
     <string name="term">Term</string>
     <string name="definition">Definition</string>
     <string name="edit_collection">Edit collection</string>
+    <string name="channel_name">Notification channel</string>
+    <string name="channel_description">Notification channel description</string>
 
     <string-array name="collection_colors">
         <item>Yellow</item>
@@ -26,5 +28,10 @@
         <item>Purple</item>
         <item>Green</item>
     </string-array>
+
+    <plurals name="number_of_cards">
+        <item quantity="one">%d card</item>
+        <item quantity="other">%d cards</item>
+    </plurals>
 
 </resources>

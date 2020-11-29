@@ -1,12 +1,9 @@
 package hu.bme.aut.flashy.adapter
 
-import android.app.ActivityOptions
 import android.content.Intent
-import android.content.res.Resources
-import android.util.Log
 import android.view.*
-import android.view.View.OnLongClickListener
 import android.widget.LinearLayout
+import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.DrawableRes
@@ -18,6 +15,7 @@ import hu.bme.aut.flashy.R
 import hu.bme.aut.flashy.data.collection.Collection
 import hu.bme.aut.flashy.fragments.EditCollectionDialogFragment
 import hu.bme.aut.flashy.fragments.NewCollectionDialogFragment
+import org.w3c.dom.Text
 
 
 class CollectionAdapter(private val listener: MainActivity) :
@@ -54,7 +52,6 @@ class CollectionAdapter(private val listener: MainActivity) :
             override fun onActionItemClicked(mode: ActionMode, item: MenuItem): Boolean {
                 return when (item.itemId) {
                     R.id.ContextMenuEdit -> {
-                        Toast.makeText(listener, "Edit selected", Toast.LENGTH_SHORT).show()
                         val editCollectionDialogFragment = EditCollectionDialogFragment()
                         editCollectionDialogFragment.setCollection(holder.collection)
 
@@ -85,7 +82,11 @@ class CollectionAdapter(private val listener: MainActivity) :
         val collection = collections[position]
         holder.nameTextView.text = collection.name
         holder.descriptionTextView.text = collection.description
+        holder.cardCountTextView.text = listener.resources.getQuantityString(R.plurals.number_of_cards, collection.flashcardCount, collection.flashcardCount)
         holder.backgroundColor.background = getDrawable(listener.resources, getBackgroundResource(collection.color), null)
+
+        holder.progressBar.max = collection.flashcardCount
+        holder.progressBar.progress = collection.learnedFlashcardCount
 
         holder.collection = collection
 
@@ -134,19 +135,19 @@ class CollectionAdapter(private val listener: MainActivity) :
     }
 
     interface CollectionClickListener {
-        //fun onCollectionChanged(collection: Collection)
         fun onCollectionRemoved(collection: Collection)
     }
 
     inner class CollectionHolder(collectionView: View) : RecyclerView.ViewHolder(collectionView){
         val nameTextView: TextView = collectionView.findViewById(R.id.CollectionName)
         val descriptionTextView: TextView = collectionView.findViewById(R.id.CollectionDescription)
+        val cardCountTextView: TextView = collectionView.findViewById(R.id.CollectionFlashcardCount)
         val backgroundColor: LinearLayout = collectionView.findViewById(R.id.Collection)
+        val progressBar: ProgressBar = collectionView.findViewById(R.id.CollectionStudyProgress)
 
         var collection: Collection? = null
 
         init {
-
             itemView.setOnClickListener{
                 val flashcardListIntent = Intent(listener, FlashcardActivity::class.java)
                 flashcardListIntent.putExtra("collectionId", collection!!.id)

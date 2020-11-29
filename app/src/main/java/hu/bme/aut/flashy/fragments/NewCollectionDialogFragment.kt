@@ -52,6 +52,8 @@ class NewCollectionDialogFragment : DialogFragment() {
             id = null,
             name = nameEditText.text.toString(),
             description = descriptionEditText.text.toString(),
+            flashcardCount = 0,
+            learnedFlashcardCount = 0,
             color = Collection.CollectionColor.getByOrdinal(background)
                 ?: Collection.CollectionColor.YELLOW
         )

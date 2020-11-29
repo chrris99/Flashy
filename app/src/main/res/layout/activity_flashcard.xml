@@ -23,7 +23,17 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <include layout="@layout/content_flashcard" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/FlashcardRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:paddingBottom="30dp"
+        app:layout_anchor="@+id/FlashcardRecyclerView"
+        app:layout_anchorGravity="center"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        tools:listitem="@layout/flashcard_item" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/addFlashcardFab"

@@ -3,13 +3,24 @@ package hu.bme.aut.flashy.adapter
 import android.content.Intent
 import android.util.Log
 import android.view.*
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.DrawableRes
+import androidx.cardview.widget.CardView
+import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.button.MaterialButton
+import com.google.android.material.card.MaterialCardView
+import com.google.android.material.textview.MaterialTextView
 import hu.bme.aut.flashy.FlashcardActivity
 import hu.bme.aut.flashy.MainActivity
 import hu.bme.aut.flashy.R
+import hu.bme.aut.flashy.data.collection.Collection
 import hu.bme.aut.flashy.data.flashcard.Flashcard
+import hu.bme.aut.flashy.fragments.EditCollectionDialogFragment
+import hu.bme.aut.flashy.fragments.EditFlashcardDialogFragment
+import hu.bme.aut.flashy.fragments.NewCollectionDialogFragment
 
 class FlashcardAdapter(private val listener: FlashcardActivity) :
     RecyclerView.Adapter<FlashcardAdapter.FlashcardHolder>() {
@@ -45,7 +56,15 @@ class FlashcardAdapter(private val listener: FlashcardActivity) :
             override fun onActionItemClicked(mode: ActionMode, item: MenuItem): Boolean {
                 return when (item.itemId) {
                     R.id.ContextMenuEdit -> {
-                        Toast.makeText(listener, "Edit selected", Toast.LENGTH_SHORT).show()
+                        val editFlashcardDialogFragment = EditFlashcardDialogFragment()
+                        editFlashcardDialogFragment.setFlashcard(holder.flashcard)
+
+                        editFlashcardDialogFragment.show(
+                            listener.supportFragmentManager,
+                            NewCollectionDialogFragment.TAG
+                        )
+
+                        holder.itemView.isSelected = false
                         mode.finish() // Action picked, so close the CAB
                         true
                     }
@@ -60,11 +79,17 @@ class FlashcardAdapter(private val listener: FlashcardActivity) :
 
             // Called when the user exits the action mode
             override fun onDestroyActionMode(mode: ActionMode) {
+                holder.itemView.isSelected = false
                 actionMode = null
             }
         }
 
         val flashcard = flashcards[position]
+        holder.card.background = ResourcesCompat.getDrawable(
+            listener.resources,
+            getFlashcardColor(flashcard.learned),
+            null
+        )
         holder.termTextView.text = flashcard.term
         holder.definitionTextView.text = flashcard.definition
 
@@ -81,6 +106,32 @@ class FlashcardAdapter(private val listener: FlashcardActivity) :
                 else -> false
             }
         }
+
+        holder.correctButton.setOnClickListener {
+            var nextPosition = holder.adapterPosition + 1
+            if (nextPosition > flashcards.lastIndex) nextPosition = 0
+
+            listener.onFlashcardLearned(nextPosition, flashcard)
+
+            holder.termTextView.visibility = MaterialCardView.VISIBLE
+            holder.definitionTextView.visibility = MaterialCardView.GONE
+            holder.correctButton.visibility = MaterialButton.GONE
+            holder.incorrectButton.visibility = MaterialButton.GONE
+        }
+
+        holder.incorrectButton.setOnClickListener {
+            holder.termTextView.visibility = MaterialCardView.VISIBLE
+            holder.definitionTextView.visibility = MaterialCardView.GONE
+            holder.correctButton.visibility = MaterialButton.GONE
+            holder.incorrectButton.visibility = MaterialButton.GONE
+
+            listener.onFlashcardNotLearned(flashcard)
+        }
+    }
+
+    private fun getFlashcardColor(learned: Boolean) = when (learned) {
+        true -> R.color.colorItem4StartSelected
+        else -> R.color.colorWhite
     }
 
     override fun getItemCount(): Int {
@@ -102,33 +153,42 @@ class FlashcardAdapter(private val listener: FlashcardActivity) :
         val flashcard = flashcards[position]
         flashcards.removeAt(position);
         notifyItemRemoved(position);
+        notifyItemRangeChanged(position, getItemCount());
         listener.onFlashcardRemoved(flashcard)
     }
 
     interface FlashcardClickListener {
-        fun onFlashcardChanged(flashcard: Flashcard)
         fun onFlashcardRemoved(flashcard: Flashcard)
+        fun onFlashcardLearned(position: Int, flashcard: Flashcard)
+        fun onFlashcardNotLearned(flashcard: Flashcard)
     }
 
     inner class FlashcardHolder(flashcardView: View) : RecyclerView.ViewHolder(flashcardView){
-        val termTextView: TextView = flashcardView.findViewById(R.id.FlashcardTerm)
-        val definitionTextView: TextView = flashcardView.findViewById(R.id.FlashcardDefinition)
+        val termTextView: MaterialTextView = flashcardView.findViewById(R.id.FlashcardTermText)
+        val definitionTextView: MaterialTextView = flashcardView.findViewById(R.id.FlashcardDefinitionText)
+        val correctButton: MaterialButton = flashcardView.findViewById(R.id.FlashcardCorrectButton)
+        val incorrectButton: MaterialButton = flashcardView.findViewById(R.id.FlashcardIncorrectButton)
+
+        val card: LinearLayout = flashcardView.findViewById(R.id.Flashcard)
 
         var flashcard: Flashcard? = null
 
         init {
             itemView.setOnClickListener{
-                if (termTextView.visibility == TextView.VISIBLE)
+                if (termTextView.visibility == MaterialCardView.VISIBLE)
                 {
-                    termTextView.visibility = TextView.GONE
-                    definitionTextView.visibility = TextView.VISIBLE
+                    termTextView.visibility = MaterialCardView.GONE
+                    definitionTextView.visibility = MaterialCardView.VISIBLE
+                    correctButton.visibility = MaterialButton.VISIBLE
+                    incorrectButton.visibility = MaterialButton.VISIBLE
                 }
 
                 else {
-                    termTextView.visibility = TextView.VISIBLE
-                    definitionTextView.visibility = TextView.GONE
+                    termTextView.visibility = MaterialCardView.VISIBLE
+                    definitionTextView.visibility = MaterialCardView.GONE
+                    correctButton.visibility = MaterialButton.GONE
+                    incorrectButton.visibility = MaterialButton.GONE
                 }
-
             }
         }
     }

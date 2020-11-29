@@ -1,5 +1,9 @@
 package hu.bme.aut.flashy
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -7,12 +11,15 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.room.Room
 import hu.bme.aut.flashy.adapter.CollectionAdapter
 import hu.bme.aut.flashy.data.collection.Collection
 import hu.bme.aut.flashy.data.collection.CollectionDatabase
+import hu.bme.aut.flashy.data.flashcard.FlashcardDatabase
 import hu.bme.aut.flashy.fragments.EditCollectionDialogFragment
 import hu.bme.aut.flashy.fragments.NewCollectionDialogFragment
 import kotlin.concurrent.thread
@@ -23,12 +30,17 @@ class MainActivity : AppCompatActivity(), CollectionAdapter.CollectionClickListe
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: CollectionAdapter
-    private lateinit var database: CollectionDatabase
+    private lateinit var notificatonBuilder: NotificationCompat.Builder
+    private lateinit var collectionDatabase: CollectionDatabase
+    private lateinit var flashcardDatabase: FlashcardDatabase
+
+    var flashcardCount : Int = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(findViewById(R.id.ActionBar))
+
 
         findViewById<View>(R.id.addCollectionFab).setOnClickListener{
             NewCollectionDialogFragment().show(
@@ -37,7 +49,7 @@ class MainActivity : AppCompatActivity(), CollectionAdapter.CollectionClickListe
             )
         }
 
-        database = Room.databaseBuilder(
+        collectionDatabase = Room.databaseBuilder(
             applicationContext,
             CollectionDatabase::class.java,
             "collection-list"
@@ -45,7 +57,20 @@ class MainActivity : AppCompatActivity(), CollectionAdapter.CollectionClickListe
             .fallbackToDestructiveMigration()
             .build()
 
+        flashcardDatabase = Room.databaseBuilder(
+            applicationContext,
+            FlashcardDatabase::class.java,
+            "flashcard-list"
+        )
+            .fallbackToDestructiveMigration()
+            .build()
+
         initRecyclerView()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        loadItemsInBackground()
     }
 
     private fun initRecyclerView() {
@@ -58,7 +83,7 @@ class MainActivity : AppCompatActivity(), CollectionAdapter.CollectionClickListe
 
     private fun loadItemsInBackground() {
         thread {
-            val collections = database.collectionDao().getAll()
+            val collections = collectionDatabase.collectionDao().getAll()
             runOnUiThread {
                 adapter.updateCollection(collections)
             }
@@ -67,7 +92,7 @@ class MainActivity : AppCompatActivity(), CollectionAdapter.CollectionClickListe
 
     override fun onCollectionChanged(changedCollection: Collection) {
         thread {
-            database.collectionDao().update(changedCollection)
+            collectionDatabase.collectionDao().update(changedCollection)
             Log.d("MainActivity", "Collection update was successful")
             loadItemsInBackground()
         }
@@ -75,7 +100,7 @@ class MainActivity : AppCompatActivity(), CollectionAdapter.CollectionClickListe
 
     override fun onCollectionCreated(newCollection: Collection) {
         thread {
-            val newId = database.collectionDao().insert(newCollection)
+            val newId = collectionDatabase.collectionDao().insert(newCollection)
             val newCollection = newCollection.copy(
                 id = newId
             )
@@ -87,8 +112,17 @@ class MainActivity : AppCompatActivity(), CollectionAdapter.CollectionClickListe
 
     override fun onCollectionRemoved(collection: Collection) {
         thread {
-            database.collectionDao().deleteItem(collection)
-            Log.d("MainActivity", "Collection was removed succesfully")
+            // Remove flashcards in collection
+            val flashcardsInCollection = flashcardDatabase.flashcardDao().getAll(collection.id!!)
+            if (flashcardsInCollection.isNotEmpty()) {
+                for (flashcard in flashcardsInCollection) {
+                    flashcardDatabase.flashcardDao().deleteItem(flashcard)
+                }
+            }
+
+
+            // Remove collection
+            collectionDatabase.collectionDao().deleteItem(collection)
         }
     }
 

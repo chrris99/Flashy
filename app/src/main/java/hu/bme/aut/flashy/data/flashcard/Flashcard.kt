@@ -9,5 +9,6 @@ data class Flashcard(
     @ColumnInfo(name = "id") @PrimaryKey(autoGenerate = true) val id: Long?,
     @ColumnInfo(name = "term") val term: String,
     @ColumnInfo(name = "definition") val definition: String,
+    @ColumnInfo(name = "learned") val learned: Boolean,
     @ColumnInfo(name = "collection") val collectionId: Long
 )

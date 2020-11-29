@@ -128,14 +128,6 @@ class FlashcardAdapter(private val listener: FlashcardActivity) :
         else -> R.drawable.flashcard_item_background_not_learned
     }
 
-    private fun getFlashcardIcon(learned: Boolean) = when(learned) {
-        true -> R.drawable.ic_check_black
-        else -> {
-            Log.d("'getFlashcardIcon", "ic_close_black selected")
-            R.drawable.ic_close_black
-        }
-    }
-
     override fun getItemCount(): Int {
         return flashcards.size
     }

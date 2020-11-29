@@ -1,24 +1,17 @@
 package hu.bme.aut.flashy.adapter
 
-import android.content.Intent
 import android.util.Log
 import android.view.*
+import android.widget.ImageView
 import android.widget.LinearLayout
-import android.widget.TextView
-import android.widget.Toast
-import androidx.annotation.DrawableRes
-import androidx.cardview.widget.CardView
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.textview.MaterialTextView
 import hu.bme.aut.flashy.FlashcardActivity
-import hu.bme.aut.flashy.MainActivity
 import hu.bme.aut.flashy.R
-import hu.bme.aut.flashy.data.collection.Collection
 import hu.bme.aut.flashy.data.flashcard.Flashcard
-import hu.bme.aut.flashy.fragments.EditCollectionDialogFragment
 import hu.bme.aut.flashy.fragments.EditFlashcardDialogFragment
 import hu.bme.aut.flashy.fragments.NewCollectionDialogFragment
 
@@ -90,6 +83,7 @@ class FlashcardAdapter(private val listener: FlashcardActivity) :
             getFlashcardColor(flashcard.learned),
             null
         )
+
         holder.termTextView.text = flashcard.term
         holder.definitionTextView.text = flashcard.definition
 
@@ -130,8 +124,16 @@ class FlashcardAdapter(private val listener: FlashcardActivity) :
     }
 
     private fun getFlashcardColor(learned: Boolean) = when (learned) {
-        true -> R.color.colorItem4StartSelected
-        else -> R.color.colorWhite
+        true -> R.drawable.flashcard_item_background_learned
+        else -> R.drawable.flashcard_item_background_not_learned
+    }
+
+    private fun getFlashcardIcon(learned: Boolean) = when(learned) {
+        true -> R.drawable.ic_check_black
+        else -> {
+            Log.d("'getFlashcardIcon", "ic_close_black selected")
+            R.drawable.ic_close_black
+        }
     }
 
     override fun getItemCount(): Int {

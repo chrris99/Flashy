@@ -6,8 +6,8 @@
 
             <gradient
                 android:angle="0"
-                android:startColor="@color/colorItem1Start"
-                android:endColor="@color/colorItem1End"/>
+                android:startColor="@android:color/holo_green_dark"
+                android:endColor="@android:color/holo_green_dark"/>
             <corners android:radius="10dp"/>
 
         </shape>
@@ -18,8 +18,8 @@
 
             <gradient
                 android:angle="0"
-                android:startColor="@color/colorItem1StartSelected"
-                android:endColor="@color/colorItem1EndSelected"/>
+                android:startColor="@android:color/holo_green_light"
+                android:endColor="@android:color/holo_green_light"/>
             <corners android:radius="10dp"/>
 
         </shape>

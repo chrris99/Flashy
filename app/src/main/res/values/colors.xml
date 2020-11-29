@@ -29,10 +29,12 @@
 
     <color name="colorBlack">#FF000000</color>
     <color name="colorWhite">#FFFFFF</color>
+    <color name="colorWhite90">#95FFFFFF</color>
 
     <color name="light_blue_50">#E1F5FE</color>
     <color name="light_blue_100">#B3E5FC</color>
     <color name="light_blue_200">#81D4FA</color>
+    <color name="light_blue_200_90">#9081D4FA</color>
     <color name="light_blue_300">#4FC3F7</color>
     <color name="light_blue_400">#29B6F6</color>
     <color name="light_blue_500">#03A9F4</color>
